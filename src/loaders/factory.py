@@ -1,16 +1,16 @@
-from core.abstracts import LoaderAbstract
-from loaders.pdf import PDFLoader
+from core import LoaderAbstract
+from .pdf import PDFLoader
 
 LOADERS: dict[str, type[LoaderAbstract]] = {
-    "application/pdf": PDFLoader,
+    ".pdf": PDFLoader,
 }
 
-def get_loader(content_type: str) -> type[LoaderAbstract]:
+def get_loader(file_extension: str) -> type[LoaderAbstract]:
     """
     Factory function that returns the appropriate loader class based on content type.
     """
-    loader = LOADERS.get(content_type)
+    loader = LOADERS.get(file_extension)
     if loader is None:
-        raise ValueError(f"Unsupported content type: {content_type}")
+        raise ValueError(f"Unsupported file extension: {file_extension}")
     return loader
 

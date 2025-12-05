@@ -1,5 +1,2 @@
 [server]
 runOnSave = true
-
-[runner]
-alwaysRerun = true

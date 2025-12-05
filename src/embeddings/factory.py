@@ -1,15 +1,11 @@
-from langchain_ollama import OllamaEmbeddings
-from langchain_core.embeddings import Embeddings
+from chromadb.utils.embedding_functions import OllamaEmbeddingFunction
 
-EMBEDDINGS: dict[str, type[Embeddings]] = {
-    "ollama": OllamaEmbeddings(model="nomic-embed-text"),
-}
+def get_embedding() -> OllamaEmbeddingFunction:
+    return OllamaEmbeddingFunction(model_name="mxbai-embed-large")
 
-def get_embedding(model: str) -> type[Embeddings]:
-    """
-    Factory function that returns the appropriate embedding class based on model.
-    """
-    embedding = EMBEDDINGS.get(model)
-    if embedding is None:
-        raise ValueError(f"Unsupported model: {model}")
-    return embedding
+# from langchain_ollama import OllamaEmbeddings
+# from langchain_core.embeddings import Embeddings
+
+# def get_embedding() -> type[Embeddings]:
+#     # nomic-embed-text is too slow
+#     return OllamaEmbeddings(model="mxbai-embed-large")

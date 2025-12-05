@@ -1,28 +1,54 @@
 import chromadb
 import uuid
-from core import VectorStoreAbstract
+from core import VectorStoreAbstract, Collection
 from langchain_core.documents import Document
 from embeddings import get_embedding
+from langchain_core.vectorstores.base import VectorStoreRetriever
+from shared import logger
 
 class ChromaVectorStore(VectorStoreAbstract):
     """
     A Chroma vector store. This is the implementation of the VectorStoreAbstract interface for the Chroma vector store.
     """
-    def __init__(self, model: str):
-        self.client = chromadb.HttpClient(host="localhost", port=8000)
-        self.embedding = get_embedding(model)
+    def __init__(self):
+        self._client = chromadb.HttpClient(host="localhost", port=8000)
     
-    def create_collection(self, collection_name: str) -> None:
-        self.client.create_collection(name=collection_name, embedding_function=self.embedding.embed_documents)
+    def create_collection(self, collection_name: str) -> Collection:
+        collection = self._client.create_collection(name=collection_name, embedding_function=get_embedding())
+        return Collection(id=collection.id, name=collection.name, metadata=collection.metadata)
 
     def collection_exists(self, collection_name: str) -> bool:
-        return self.client.get_collection(name=collection_name) is not None
+        try:
+            _ = self._client.get_collection(name=collection_name)
+            return True
+        except Exception:
+            return False
+
+    def get_collections(self) -> list[Collection]:
+        return [Collection(id=collection.id, name=collection.name, metadata=collection.metadata) for collection in self._client.list_collections()]
 
     def add_documents(self, collection_name: str, documents: list[Document]) -> None:
-        documents_with_ids = self._get_documents_with_ids(documents)
-        self.client.get_collection(name=collection_name).add(documents_with_ids)
+        logger.info(f"Adding {len(documents)} documents to collection {collection_name}")
+        collection = self._client.get_collection(name=collection_name)
+
+        ids, docs_contents, metadatas = [], [], []
+        for document in documents:
+            ids.append(str(uuid.uuid4()))
+            docs_contents.append(document.page_content)
+            metadatas.append(document.metadata)
+
+        collection.add(ids=ids, documents=docs_contents, metadatas=metadatas)
 
     def _get_documents_with_ids(self, documents: list[Document]) -> list[Document]:
         for document in documents:
             document.metadata["id"] = str(uuid.uuid4())
         return documents
+
+    def as_retriever(self, collection_name: str) -> VectorStoreRetriever:
+        return self._client.get_collection(name=collection_name).as_retriever(search_kwargs={"k": 5})
+
+    def delete_collection(self, collection_name: str) -> None:
+        try:
+            self._client.delete_collection(name=collection_name)
+        except Exception as e:
+            raise ValueError(f"Failed to delete collection: {e}")

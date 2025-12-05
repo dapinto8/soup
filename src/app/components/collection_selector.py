@@ -1,9 +1,13 @@
 import streamlit as st
+from dependencies import get_collection_service
 
 def collection_selector() -> None:
     st.sidebar.markdown("### 📂 Collection")
 
-    collection_names = ["Default"]
+    collection_service = get_collection_service()
+    
+    collections = collection_service.get_collections()
+    collection_names = [collection.name for collection in collections]
 
     if not collection_names:
         st.sidebar.info("No collections yet. Create one to get started.")

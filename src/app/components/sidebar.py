@@ -1,6 +1,7 @@
 import streamlit as st
 from .model_selector import model_selector
 from .collection_selector import collection_selector
+from .create_collection_dialog import render_create_collection_dialog
 
 def sidebar(title: str, pages: list[st.Page]) -> None:
     """Render the sidebar with global components."""
@@ -17,3 +18,6 @@ def sidebar(title: str, pages: list[st.Page]) -> None:
 
         # Collection selector
         collection_selector()
+
+        # Create collection dialog
+        render_create_collection_dialog()

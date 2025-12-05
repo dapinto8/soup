@@ -1,9 +1,7 @@
 import streamlit as st
-from pathlib import Path
 from .components import sidebar
-from config import DEFAULT_MODEL
+from config import DEFAULT_MODEL, APP_DIR
 
-APP_DIR = Path(__file__).parent
 
 def init_session_state() -> None:
     """Initialize the session state."""
@@ -30,6 +28,7 @@ def app() -> None:
         st.Page(str(APP_DIR / "pages/1_home.py"), title="Home", icon="🏠"),
         st.Page(str(APP_DIR / "pages/2_Chat.py"), title="Chat", icon="💬"),
         st.Page(str(APP_DIR / "pages/3_Upload.py"), title="Upload", icon="📄"),
+        st.Page(str(APP_DIR / "pages/4_Collections.py"), title="Collections", icon="📂"),
     ]
 
     # Sidebar

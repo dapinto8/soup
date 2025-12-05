@@ -41,7 +41,7 @@ def home_page() -> None:
     with col1:
         st.markdown("**Model:**")
         if "selected_model" in st.session_state:
-            st.code(st.session_state.selected_model)
+            st.code(st.session_state.selected_model.name)
         else:
             st.code("Not selected")
     

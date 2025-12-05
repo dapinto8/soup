@@ -1,5 +1,5 @@
 import streamlit as st
-from app.components import sidebar, get_selected_model, get_selected_collection
+from app.components import get_selected_model, get_selected_collection
 
 def chat_page() -> None:
     """Chat page."""
@@ -18,7 +18,7 @@ def chat_page() -> None:
     col1, col2 = st.columns(2)
     with col1:
         model = get_selected_model()
-        st.info(f"🤖 Model: **{model}**")
+        st.info(f"🤖 Model: **{model.name}**")
     with col2:
         collection = get_selected_collection()
         if collection:
