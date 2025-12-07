@@ -44,11 +44,18 @@ class ChromaVectorStore(VectorStoreAbstract):
             document.metadata["id"] = str(uuid.uuid4())
         return documents
 
-    def as_retriever(self, collection_name: str) -> VectorStoreRetriever:
-        return self._client.get_collection(name=collection_name).as_retriever(search_kwargs={"k": 5})
-
     def delete_collection(self, collection_name: str) -> None:
         try:
             self._client.delete_collection(name=collection_name)
         except Exception as e:
             raise ValueError(f"Failed to delete collection: {e}")
+
+    def similarity_search(self, collection_name: str, query: str, k: int) -> list[Document]:
+        result = self._client.get_collection(name=collection_name).query(query_texts=query, n_results=k)
+        # logger.info(f"Results: {result}")
+
+        documents = []
+        for document, metadata in zip(result["documents"], result["metadatas"]):
+            documents.append(Document(page_content=document[0], metadata=metadata[0]))
+
+        return documents

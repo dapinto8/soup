@@ -11,14 +11,14 @@ UPLOADS_DIR = DATA_DIR / "uploads"
 
 MODEL_REGISTRY: list[LLMModelConfig] = [
     LLMModelConfig(
-        name="Ollama - GPT-OSS",
-        provider="ollama",
-        model="gpt-oss:120b-cloud"
-    ),
-    LLMModelConfig(
         name="Ollama - DeepSeek V3.1",
         provider="ollama",
         model="deepseek-v3.1:671b-cloud"
+    ),
+    LLMModelConfig(
+        name="Ollama - GPT-OSS",
+        provider="ollama",
+        model="gpt-oss:120b-cloud"
     ),
     LLMModelConfig(
         name="Ollama - Mistral 3",
@@ -42,9 +42,9 @@ MODEL_REGISTRY: list[LLMModelConfig] = [
 # Default model on first load
 DEFAULT_MODEL = MODEL_REGISTRY[0]
 
-def get_model_config(model: str) -> LLMModelConfig:
+def get_model_config(model_name: str) -> LLMModelConfig:
     """Get the model config for a given model name."""
     for model_config in MODEL_REGISTRY:
-        if model_config.name == model:
+        if model_config.name == model_name:
             return model_config
-    raise ValueError(f"Model {model} not found in registry")
+    raise ValueError(f"Model {model_name} not found in registry")

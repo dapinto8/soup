@@ -9,10 +9,6 @@ class VectorStoreAbstract(ABC):
     """
 
     @abstractmethod
-    def as_retriever(self, collection_name: str) -> VectorStoreRetriever:
-        pass
-
-    @abstractmethod
     def create_collection(self, collection_name: str, model_config: LLMModelConfig) -> Collection:
         pass
 
@@ -30,4 +26,8 @@ class VectorStoreAbstract(ABC):
 
     @abstractmethod
     def delete_collection(self, collection_name: str) -> None:
+        pass
+
+    @abstractmethod
+    def similarity_search(self, collection_name: str, query: str, k: int) -> list[Document]:
         pass
